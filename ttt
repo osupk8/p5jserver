@@ -1,0 +1,45 @@
+/*
+* sketch de dessin collaboratif.
+* Basé sur un modèle client/serveur
+* avec utilisation de socket.
+*/
+
+// Création d'un socket (prise) pour connection au serveur.
+var socket;
+
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  // on active le socket qui va permettre une communication bi-directionnelle 
+  // avec le serveur (io :  input/output --> entrèe/sortie )
+  socket = io();
+  // msgProcessing (traitementMesage) est la fonction à appeler
+  // lors de la reception de messages type 'msg'  
+  socket.on('msg',msgProcessing);
+}
+
+function draw() {
+
+}
+
+function mouseDragged() {
+  // data est un regroupement de plusieurs informations
+  // ici les coordonnes de la souris
+  var data = { 	x : mouseX, y : mouseY };
+  
+  // On envoi le message tagué 'msg' vers le serveur via le socket.
+  socket.emit('msg',data);
+  console.log('sending : '+data.x+';'+data.y);  
+  
+  fill(0,0,255);
+  noStroke();
+  ellipse(data.x,data.y,10,10);	
+}
+
+// fonction appelé lors de la réception d'un message 'msg'
+function msgProcessing(data) {
+  // le contenu du message 'msg' contient les coordonnées de la souris
+  // des autres clients.
+  fill(255,0,0);
+  noStroke();
+  ellipse(data.x,data.y,10,10);	
+}
